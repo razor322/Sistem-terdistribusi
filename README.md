@@ -1,2 +1,2 @@
-# Sistem-terdistribusi
+# Sistem-terdistribusi-Gybran Nauval 
 Posting Tugas
