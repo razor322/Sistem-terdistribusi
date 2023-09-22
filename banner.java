@@ -1,66 +1,92 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package st_2111081006;
+
+/**
+ *
+ * @author Gybran
+ */
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 class Banner extends JFrame {
-    private JLabel label;
-    private String bannerText = "";
+    private JLabel topLabel;
+    private JLabel bottomLabel;
+    private String topText;
+    private String bottomText;
 
-    Banner(String title) {
-        super(title);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public Banner() {
+        topLabel = new JLabel();
+        bottomLabel = new JLabel();
 
-        JPanel inputPanel = new JPanel();
-        JTextField nameField = new JTextField(25);
-        JButton submitButton = new JButton("Submit");
+        topLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        topLabel.setHorizontalAlignment(JLabel.LEFT);
 
-        submitButton.addActionListener(e -> {
-            String name = nameField.getText();
-            if (!name.isEmpty()) {
-                bannerText = name;
-                moveBanner();
+        bottomLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        bottomLabel.setHorizontalAlignment(JLabel.RIGHT);
+
+        add(topLabel, BorderLayout.NORTH);
+        add(bottomLabel, BorderLayout.SOUTH);
+
+        topText = "Gybran Nauval Yuhandika";
+        bottomText = "Gybran Nauval Yuhandika";
+
+        // Buat thread untuk animasi teks pertama (kiri ke kanan)
+        Thread topThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    moveTopText();
+                    try {
+                        Thread.sleep(120); // Mengatur kecepatan animasi
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
-        label = new JLabel();
-        inputPanel.add(nameField);
-        inputPanel.add(submitButton);
+        // Buat thread untuk animasi teks kedua (kanan ke kiri)
+        Thread bottomThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    moveBottomText();
+                    try {
+                        Thread.sleep(120); // Mengatur kecepatan animasi
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
-        getContentPane().add(inputPanel, BorderLayout.NORTH);
-        getContentPane().add(label, BorderLayout.CENTER);
+        topThread.start();
+        bottomThread.start();
 
-        setSize(1920, 1080);
+        setTitle("Dual Banner App");
+        setSize(600, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    void moveBanner() {
-        Thread thread = new Thread(() -> {
-            int x = getWidth();
-            while (x > -bannerText.length() * 50) {
-                x -= 5;
-                label.setText(padSpaces(x) + bannerText);
-                try {
-                    Thread.sleep(10); 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            bannerText = "";
-            label.setText("");
-        });
-        thread.start();
+    private void moveTopText() {
+        topText = topText.substring(1) + topText.charAt(0);
+        topLabel.setText(topText);
     }
 
-    private String padSpaces(int count) {
-        StringBuilder spaces = new StringBuilder();
-        for (int i = 0; i < count; i++) {
-            spaces.append(" ");
-        }
-        return spaces.toString();
+    private void moveBottomText() {
+        bottomText = bottomText.charAt(bottomText.length() - 1) + bottomText.substring(0, bottomText.length() - 1);
+        bottomLabel.setText(bottomText);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new Banner("Banner Bergerak");
-        });
+        new Banner();
     }
 }
+
